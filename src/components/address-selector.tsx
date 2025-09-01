@@ -18,7 +18,6 @@ export function AddressSelector({ onAddressSelect }: AddressSelectorProps) {
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<Address[]>([])
-  const [detailAddress, setDetailAddress] = useState('')
 
   // Debounce search query 1 detik
   useEffect(() => {
@@ -72,7 +71,11 @@ export function AddressSelector({ onAddressSelect }: AddressSelectorProps) {
   }, [debouncedQuery])
 
   const handleAddressSelect = (address: Address) => {
-    const updatedAddress = { ...address, detail: detailAddress }
+    const updatedAddress = {
+      ...address,
+      detail: state.address?.detail || '',
+    }
+
     dispatch({ type: 'SET_ADDRESS', address: updatedAddress })
     onAddressSelect?.(updatedAddress)
     setIsExpanded(false)
@@ -225,9 +228,24 @@ export function AddressSelector({ onAddressSelect }: AddressSelectorProps) {
           <div className="mt-2">
             <Label className="text-sm font-medium">Detail Alamat</Label>
             <Input
+              className='placeholder:opacity-60'
               placeholder="Contoh: Lantai 2, No. 12"
-              value={detailAddress}
-              onChange={(e) => setDetailAddress(e.target.value)}
+              value={state.address?.detail || ''}
+              onChange={(e) => {
+                const updatedAddress = state.address
+                  ? { ...state.address, detail: e.target.value }
+                  : {
+                      street: '',
+                      city: '',
+                      district: '',
+                      postalCode: '',
+                      coordinates: { lat: 0, lng: 0 },
+                      fullAddress: '',
+                      detail: e.target.value,
+                    }
+                dispatch({ type: 'SET_ADDRESS', address: updatedAddress })
+                onAddressSelect?.(updatedAddress)
+              }}
             />
           </div>
 

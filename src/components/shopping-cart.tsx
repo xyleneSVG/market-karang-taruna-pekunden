@@ -62,10 +62,13 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
       quantity: item.quantity,
     }))
 
-    const addressText = state.address ? `\nAlamat Pengiriman:\n${state.address.fullAddress}\n\nDetail Alamat:\n${state.address.detail}` : ''
+    const addressText = state.address
+      ? `\nAlamat Pengiriman:\n${state.address.fullAddress}` +
+        (state.address.detail ? `\n\nDetail Alamat:\n${state.address.detail}` : '')
+      : ''
 
     const total = state.total
-    const message = generateWhatsAppMessage(whatsappItems, total) + addressText 
+    const message = generateWhatsAppMessage(whatsappItems, total) + addressText
 
     const whatsappURL = generateWhatsAppURL(message, 6285702630057)
     window.open(whatsappURL, '_blank')
@@ -194,7 +197,9 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="border-t px-4 py-4 space-y-4">
-        <AddressSelector />
+        <AddressSelector
+          onAddressSelect={(addr) => dispatch({ type: 'SET_ADDRESS', address: addr })}
+        />
 
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">

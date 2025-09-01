@@ -23,15 +23,12 @@ interface CartItem {
 }
 
 export interface Address {
-  street: string
-  city: string
-  district: string
-  postalCode: string
-  coordinates: {
-    lat: number
-    lng: number
-  }
-  fullAddress: string
+  street?: string
+  city?: string
+  district?: string
+  postalCode?: string
+  coordinates?: { lat: number; lng: number }
+  fullAddress?: string
   detail: string
 }
 
@@ -60,7 +57,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD_ITEM': {
       const existingItemIndex = state.items.findIndex(
-        (item) => item.product.id === action.product.id
+        (item) => item.product.id === action.product.id,
       )
 
       let newItems: CartItem[]
@@ -68,7 +65,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         newItems = state.items.map((item, index) =>
           index === existingItemIndex
             ? { ...item, quantity: item.quantity + action.quantity }
-            : item
+            : item,
         )
       } else {
         newItems = [...state.items, { product: action.product, quantity: action.quantity }]
@@ -94,7 +91,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       }
 
       const newItems = state.items.map((item) =>
-        item.product.id === action.productId ? { ...item, quantity: action.quantity } : item
+        item.product.id === action.productId ? { ...item, quantity: action.quantity } : item,
       )
 
       const total = newItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
@@ -121,7 +118,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     items: [],
     total: 0,
     itemCount: 0,
-    address: null, 
+    address: null,
   })
 
   return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
