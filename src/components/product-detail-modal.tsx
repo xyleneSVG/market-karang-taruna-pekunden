@@ -4,12 +4,11 @@
   import { Button } from '@/components/ui/button'
   import { Badge } from '@/components/ui/badge'
   import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-  import { Heart, X, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react'
+  import { X, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react'
   import { useCart } from '@/contexts/cart-context'
   import { AnimatedAddToCart } from '@/components/animated-add-to-cart'
   import { WhatsAppCheckoutButton } from '@/components/whatsapp-checkout-button'
   import { ProductEntity } from '@/Entities/ProductItem'
-  import { Media } from '@/payload-types'
   import { mapEntityToProduct } from '@/utils/mapEntityToProduct'
 
   interface ProductDetailModalProps {
@@ -22,7 +21,6 @@
   export function ProductDetailModal({ url, product, isOpen, onClose }: ProductDetailModalProps) {
     const [quantity, setQuantity] = useState(1)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
-    const [isLiked, setIsLiked] = useState(false)
     const { dispatch } = useCart()
 
     if (!product) return null
@@ -51,7 +49,7 @@
                 <img
                   src={url + product.images[currentImageIndex]?.item?.url}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover"
                 />
                 {/* Image Navigation */}
                 {product.images.length > 1 && (
