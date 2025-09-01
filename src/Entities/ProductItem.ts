@@ -15,6 +15,8 @@ export interface ProductEntity {
   id: number;
   name: string;
   price: number;
+  discounted: boolean;
+  originalPrice?: number; 
   excerpt: string;
   description: string;
   unit: string;

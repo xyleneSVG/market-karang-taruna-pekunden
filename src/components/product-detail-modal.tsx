@@ -124,9 +124,9 @@
                   <span className="text-3xl font-bold text-primary transition-all duration-300 hover:scale-110 inline-block">
                     Rp {product.price.toLocaleString('id-ID')}
                   </span>
-                  {product.price && (
+                  {(product.discounted && product.originalPrice) && (
                     <span className="text-lg text-muted-foreground line-through">
-                      Rp {product.price.toLocaleString('id-ID')}
+                      Rp {product.originalPrice.toLocaleString('id-ID')}
                     </span>
                   )}
                 </div>

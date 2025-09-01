@@ -138,6 +138,8 @@ export interface Product {
   id: number;
   name: string;
   price: number;
+  discounted?: boolean | null;
+  originalPrice?: number | null;
   excerpt: string;
   description: string;
   /**
@@ -282,6 +284,8 @@ export interface ProductCategoriesSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   name?: T;
   price?: T;
+  discounted?: T;
+  originalPrice?: T;
   excerpt?: T;
   description?: T;
   unit?: T;
