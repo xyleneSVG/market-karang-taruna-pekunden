@@ -20,6 +20,7 @@ export interface ProductContextEntity {
 interface CartItem {
   product: ProductContextEntity
   quantity: number
+  note?: string
 }
 
 export interface Address {
@@ -37,14 +38,21 @@ interface CartState {
   total: number
   itemCount: number
   address: Address | null
+  mapUrl: string | null
+  shippingCost: number | null
+  isFetching: boolean
 }
 
 type CartAction =
   | { type: 'ADD_ITEM'; product: ProductContextEntity; quantity: number }
   | { type: 'REMOVE_ITEM'; productId: string }
   | { type: 'UPDATE_QUANTITY'; productId: string; quantity: number }
+  | { type: 'UPDATE_NOTE'; productId: string; note: string }
   | { type: 'CLEAR_CART' }
   | { type: 'SET_ADDRESS'; address: Address }
+  | { type: 'SET_MAP_URL'; mapUrl: string | null }
+  | { type: 'SET_ONGKIR'; cost: number | null }
+  | { type: 'SET_FETCHING'; isLoading: boolean }
 
 // ===== CONTEXT =====
 const CartContext = createContext<{
@@ -100,12 +108,38 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       return { ...state, items: newItems, total, itemCount }
     }
 
+    case 'UPDATE_NOTE': {
+      const newItems = state.items.map((item) =>
+        item.product.id === action.productId ? { ...item, note: action.note } : item,
+      )
+      return { ...state, items: newItems }
+    }
+
     case 'SET_ADDRESS': {
       return { ...state, address: action.address }
     }
 
+    case 'SET_MAP_URL':
+      return { ...state, mapUrl: action.mapUrl }
+
+    case 'SET_ONGKIR': {
+      return { ...state, shippingCost: action.cost }
+    }
+
+    case 'SET_FETCHING': {
+      return { ...state, isFetching: action.isLoading }
+    }
+
     case 'CLEAR_CART':
-      return { items: [], total: 0, itemCount: 0, address: null }
+      return {
+        items: [],
+        total: 0,
+        itemCount: 0,
+        address: null,
+        mapUrl: null,
+        shippingCost: null,
+        isFetching: false,
+      }
 
     default:
       return state
@@ -119,6 +153,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     total: 0,
     itemCount: 0,
     address: null,
+    mapUrl: null,
+    shippingCost: 0,
+    isFetching: false,
   })
 
   return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>

@@ -70,7 +70,8 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
     const total = state.total
     const message = generateWhatsAppMessage(whatsappItems, total) + addressText
 
-    const whatsappURL = generateWhatsAppURL(message, 6285702630057)
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+    const whatsappURL = generateWhatsAppURL(message, Number(whatsappNumber))
     window.open(whatsappURL, '_blank')
 
     onClose()
@@ -152,6 +153,22 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
                 {item.product.category} • {item.product.unit}
               </p>
 
+              <div className="my-2">
+                <input
+                  type="text"
+                  placeholder="Tambah catatan..."
+                  value={item.note || ''}
+                  onChange={(e) =>
+                    dispatch({
+                      type: 'UPDATE_NOTE',
+                      productId: item.product.id,
+                      note: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-md border px-2 py-1 text-sm text-foreground"
+                />
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Button
@@ -208,13 +225,21 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Ongkos Kirim</span>
-            <span className="font-medium text-primary">Gratis</span>
+            <span className="font-medium text-primary">
+              {state.isFetching
+                ? 'Menghitung...'
+                : state.shippingCost === null
+                  ? 'Alamat tidak ditemukan'
+                  : state.shippingCost === 0
+                    ? 'Gratis'
+                    : `Rp ${state.shippingCost.toLocaleString('id-ID')}`}
+            </span>
           </div>
           <div className="border-t pt-2">
             <div className="flex items-center justify-between">
               <span className="font-semibold">Total</span>
               <span className="font-bold text-lg text-primary">
-                Rp {state.total.toLocaleString('id-ID')}
+                Rp {(state.total + (state.shippingCost || 0)).toLocaleString('id-ID')}
               </span>
             </div>
           </div>
@@ -224,7 +249,7 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
           className="w-full"
           size="lg"
           onClick={handleWhatsAppCheckout}
-          disabled={!state.address}
+          disabled={!state.address || state.shippingCost === null || state.isFetching}
         >
           <MessageCircle className="w-5 h-5 mr-2" />
           Checkout via WhatsApp
@@ -233,7 +258,7 @@ function ShoppingCartContent({ onClose }: { onClose: () => void }) {
         <div className="text-center">
           <p className="text-xs text-muted-foreground">
             {!state.address
-              ? 'Pilih alamat pengiriman untuk melanjutkan checkout'
+              ? 'Tulis alamat pengiriman untuk melanjutkan checkout'
               : 'Pesanan akan dikirim melalui WhatsApp untuk konfirmasi'}
           </p>
         </div>

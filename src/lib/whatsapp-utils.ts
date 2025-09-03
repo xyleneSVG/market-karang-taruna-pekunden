@@ -6,6 +6,7 @@ interface CartItem {
     category: string
     unit: string
   }
+  note?: string
   quantity: number
 }
 
@@ -15,11 +16,12 @@ export function generateWhatsAppMessage(items: CartItem[], total: number): strin
   const itemsList = items
     .map((item, index) => {
       const itemTotal = item.product.price * item.quantity
+      const noteText = item.note && `\n   Catatan: ${item.note}`
       return `${index + 1}. *${item.product.name}*
    Kategori: ${item.product.category}
    Harga: Rp ${item.product.price.toLocaleString('id-ID')} ${item.product.unit}
    Jumlah: ${item.quantity}
-   Subtotal: Rp ${itemTotal.toLocaleString('id-ID')}\n`
+   Subtotal: Rp ${itemTotal.toLocaleString('id-ID')}${noteText}\n`
     })
     .join('\n')
 
